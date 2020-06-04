@@ -1,0 +1,19 @@
+.hand-enter-active  .wrapper,
+.hand-leave-active .wrapper{
+	transition: opacity .8s cubic-bezier(.08, .74, .34, 1);
+	transform-origin: bottom center;
+}
+.hand-enter .wrapper,
+.hand-leave-to .wrapper{
+	transform: rotate(90deg);
+}
+
+.hand-enter-active  .card,
+.hand-leave-active .card{
+	transition: margin .8s cubic-bezier(.08, .74, .34, 1);
+	transform-origin: bottom center;
+}
+.hand-enter .card,
+.hand-leave-to .card{
+	margin:0 -100[x;]
+}s
