@@ -17,10 +17,7 @@ new Vue({
 			<transition name="hand">
 				<hand :cards='this.testHand' v-if='!this.activeOverlay' @cardplay='testPlayCard'/>
 			</transition>
-			<card :def='this.testHand[0].def' />
-			<div @click='testPlayCard(card)'>
-			asd
-			</div >
+
 			
 		</div>
 	`,
