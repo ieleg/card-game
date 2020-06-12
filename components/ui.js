@@ -49,3 +49,75 @@ Vue.component('hand',{
 		}
 	}
 })
+
+// 浮层
+Vue.component('overlay',{
+	template:`<div class='overlay @click='handleClick>
+							<div class='content'>
+								<slot />
+							</div>
+						</div>
+						`,
+	methods:{
+		handleClick(){
+			this.$emit('close');
+		}
+	}
+})
+//根据是否跳过回合,向当前玩家显示两条不同的信息
+Vue.component('overlay-content-player-turn',{
+	template:`<div>
+							<div class='big' v-if='player.skipTurn'>
+								{{player.name}},<br>你的回合跳过!
+							</div>
+							<div class='big' v-else>
+								{{player.name}},<br>轮到你的回合了!
+							</div>
+							<div>Tap to continue </div>
+						</div>
+						`,
+	props:['player'],
+})
+
+Vue.component('overlay-content-last-play',{
+	template:`<div>
+							<div v-if='opponent.skippedTurn'>
+								{{opponent.name}}回合跳过
+							</div>
+							<template v-else>
+								<div>{{opponent.name}}出牌</div>
+								<card :def='lastPlayedCard'/>
+							</template>
+						</div>
+						`,
+	props:['opponent'],
+	computed:{	
+		lastPlayedCard(){
+			return getLastPlayedCard(this.opponent)
+		}
+	},
+})
+
+
+Vue.component('player-result',{
+	template:`<div class='player-result' :class='result'>
+							<span class='name'>{{palyer.name}}</span>是
+							<span class='result'>{{resulet}}</span>
+						</div>
+						`,
+	props:['player'],
+	computed:{	
+		result(){
+			return this.player.dead ? '败者':'胜者'
+		}
+	},
+})
+
+Vue.component('overlay-content-game-over',{
+	template:`<div>
+							<div class='big'>游戏结束</div>
+							<player-result v-for='player in players' :player='player' />
+						</div>
+						`,
+	props:['players'],
+})

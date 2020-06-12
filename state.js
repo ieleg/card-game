@@ -19,4 +19,22 @@ var state = {
 	currentPlayerIndex:	Math.round(Math.random()),
 	testHand:[],
 	activeOverlay:null,
+	// 游戏开始状态
+	food:10,
+	health:10,
+	// 是否跳过下个会和
+	skipTurn:false,
+	skippedTurn:false,
+	hand:[],
+	lasePlayerCardId:null,
+	dead:false,
+	get currentPlayer () {
+		return state.players[state.currentPlayerIndex]
+	},
+	get currentOpponentId () {
+		return state.currentPlayerIndex === 0 ? 1 : 0
+	},
+	get currentOpponent () {
+		return state.players[state.currentOpponentId]
+	},
 }

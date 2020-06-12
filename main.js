@@ -14,8 +14,26 @@ new Vue({
 			template: `
 		<div id="#app"> 
 			<top-bar :turn='this.turn' :current-player-index='this.currentPlayerIndex' :players='this.players'/>
+			<div class='world'>
+				<castle v-for="(player,index) in this.players" :player='player' :index='index' />
+				<div class='land' />
+			</div>
 			<transition name="hand">
 				<hand :cards='this.testHand' v-if='!this.activeOverlay' @cardplay='testPlayCard'/>
+			</transition>
+			
+			<transition name="fade">
+				<div class="overlay-background" v-if="activeOverlay" />
+			</transition>			
+			
+			<transition name='zoom'>
+				<overlay v-if='this.activeOverlay' :key='activeOverlay'>
+					<!--<overlay-content-player-turn v-if="this.activeOverlay==='player-turn'" :player='currentPlayer'/>
+					<overlay-content-last-play v-if="this.activeOverlay==='last-play'" :opponent='this.	currentOpponent'/>
+					<overlay-content-game-over v-if="this.activeOverlay==='game-over'" :players='players'/>-->
+					<component :is="'overlay-content-'+activeOverlay" :player='currentPlayer' :opponent='currentOpponent'
+						:players='players' />
+				</overlay>
 			</transition>
 
 			
