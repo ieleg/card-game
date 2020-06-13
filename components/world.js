@@ -39,6 +39,117 @@ Vue.component('castle-banners', {
 // 该组件包括一幅图像和一个文本,显示食物点数或生命值
 // 数值减少气泡向上移动,数值增,气泡下移
 
-Vue.component('bubble',{
-	
+Vue.component('bubble', {
+  template: `<div class="stat-bubble" :class="type + '-bubble'" :style="bubbleStyle">
+    <img :src="'svg/' + type + '-bubble.svg'" />
+    <div class="counter">{{ value }}</div>
+  </div>`,
+  props: ['type', 'value', 'ratio'],
+  computed: {
+    bubbleStyle () {
+      return {
+        top: (this.ratio * 220 + 40) * state.worldRatio + 'px',
+      }
+    },
+  },
 })
+
+Vue.component('banner-bar', {
+  template: '#banner',
+  props: ['color', 'ratio'],
+  computed: {
+    targetHeight () {
+      return 220 * this.ratio + 40
+    },
+  },
+	data(){
+		return {
+			height:0,
+		}
+	},
+	watch: {
+		targetHeight (newValue, oldValue) {
+			const vm = this
+			new TWEEN.Tween({ value: oldValue })
+				.easing(TWEEN.Easing.Cubic.InOut)
+				.to({ value: newValue }, 500)
+				.onUpdate(function () {
+					vm.height = this.value.toFixed(0)
+				})
+				.start()
+		},
+	},
+	created(){
+		this.height = this.targetHeight;
+	}
+})
+
+// 云的动画
+
+const cloudAnimationDurations = {
+	min: 10000,
+	max: 50000,
+}
+
+Vue.component('cloud', {
+  template: `<div class="cloud" :class="'cloud-' + type" :style="style">
+    <img :src="'svg/cloud' + type + '.svg'" @load="initPosition" />
+  </div>`,
+  props: ['type'],
+  data () {
+    return {
+      style: {
+        transform: 'none',
+        zIndex: 0,
+      },
+    }
+  },
+  methods: {
+    setPosition (left, top) {
+      // Use transform for better performance
+      this.style.transform = `translate(${left}px, ${top}px)`
+    },
+
+    initPosition () {
+      // Element width
+			//console.log(this.$el.__proto__);
+      const width = this.$el.clientWidth
+      this.setPosition(-width, 0)
+    },
+
+    startAnimation (delay = 0) {
+      const vm = this
+
+      // Element width
+      const width = this.$el.clientWidth
+
+      // Random animation duration
+      const { min, max } = cloudAnimationDurations
+      const animationDuration = Math.random() * (max - min) + min
+
+      // Bing faster clouds forward
+      this.style.zIndex = Math.round(max - animationDuration)
+
+      // Random position
+      const top = Math.random() * (window.innerHeight * 0.3)
+
+      new TWEEN.Tween({ value: -width })
+        .to({ value: window.innerWidth }, animationDuration)
+        .delay(delay)
+        .onUpdate(function () {
+          vm.setPosition(this.value, top)
+        })
+        .onComplete(() => {
+          // With a random delay
+          this.startAnimation(Math.random() * 10000)
+        })
+        .start()
+    },
+  },
+  mounted () {
+    // We start the animation with a negative delay
+    // So it begins midway
+    this.startAnimation(-Math.random() * cloudAnimationDurations.min)
+  },
+})
+

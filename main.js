@@ -6,20 +6,32 @@ new Vue({
 				// testCard(){
 				// 	return cards.archers;
 				// }
+				cssClass(){
+					return {
+						'can-play':this.canPlay
+					}
+				}
 			},
 			created() {
 				this.testHand = this.createHand();
 				// console.log(this.testHand);
 			},
+			mounted(){
+				console.log(this.currentHand)
+				beginGame();
+			},
 			template: `
-		<div id="#app"> 
+		<div id="#app" :class='cssClass'> 
 			<top-bar :turn='this.turn' :current-player-index='this.currentPlayerIndex' :players='this.players'/>
 			<div class='world'>
+				<div class="clouds">
+					<cloud v-for='index in 10' :type='(index - 1) % 5 + 1' />
+				</div>
 				<castle v-for="(player,index) in this.players" :player='player' :index='index' />
 				<div class='land' />
 			</div>
 			<transition name="hand">
-				<hand :cards='this.testHand' v-if='!this.activeOverlay' @cardplay='testPlayCard'/>
+				<hand :cards='this.currentHand' v-if='!this.activeOverlay' @cardplay='testPlayCard'/>
 			</transition>
 			
 			<transition name="fade">
@@ -29,7 +41,7 @@ new Vue({
 			<transition name='zoom'>
 				<overlay v-if='this.activeOverlay' :key='activeOverlay'>
 					<!--<overlay-content-player-turn v-if="this.activeOverlay==='player-turn'" :player='currentPlayer'/>
-					<overlay-content-last-play v-if="this.activeOverlay==='last-play'" :opponent='this.	currentOpponent'/>
+					<overlay-content-last-play v-if="this.activeOverlay==='last-play'" :opponent='this.currentOpponent'/>
 					<overlay-content-game-over v-if="this.activeOverlay==='game-over'" :players='players'/>-->
 					<component :is="'overlay-content-'+activeOverlay" :player='currentPlayer' :opponent='currentOpponent'
 						:players='players' />
@@ -70,3 +82,18 @@ new Vue({
 				},
 			}
 		})
+		
+		
+// Tween.js
+requestAnimationFrame(animate);
+
+function animate(time) {
+  requestAnimationFrame(animate);
+  TWEEN.update(time);
+}
+
+// 游戏逻辑
+
+function beginGame(){
+	state.players.forEach(drawInitialHand)
+}

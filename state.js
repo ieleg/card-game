@@ -28,6 +28,12 @@ var state = {
 	hand:[],
 	lasePlayerCardId:null,
 	dead:false,
+	
+	//可抽取卡的堆
+	drawPile:pile,
+	// 弃牌堆
+	discardPile:{},
+	canPlay:false,
 	get currentPlayer () {
 		return state.players[state.currentPlayerIndex]
 	},
@@ -37,4 +43,7 @@ var state = {
 	get currentOpponent () {
 		return state.players[state.currentOpponentId]
 	},
+  get currentHand () {
+    return state.currentPlayer.hand
+  },
 }
