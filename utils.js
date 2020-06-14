@@ -30,8 +30,9 @@ function drawCard () {
   }
 }
 
-function drawInitialHand (player) {
+function drawInitialHand (player,index) {
   for (let i = 0; i < handSize; i++) {
+		console.log(index);
     player.hand.push(drawCard())
   }
 }

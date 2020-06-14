@@ -3,6 +3,7 @@ Vue.component('top-bar',{
 	// 	console.log(turn);
 	// },
 	template:`<div class='top-bar' :class="'player-'+currentPlayerIndex">
+							
 							<div class='player p0'>{{players[0].name}}</div>
 							<div class='turn-counter'>
 								<img class='arrow' src='svg/turn.svg' />
@@ -13,7 +14,14 @@ Vue.component('top-bar',{
 	`,
 	props:['players','currentPlayerIndex','turn'],
 })
-
+Vue.component('rule',{
+	template:`<div class='rule'>
+		<span>双方有10点生命,10份食物和5张手牌</span>
+		<span>双方每回合仅能出一张牌</span>
+		<span>当玩家的食物或生命为0时,判为失败</span>
+	</div>
+	`
+})
 Vue.component('card',{
 	props:['def'],
 	template:`<div class='card' :class="'type-'+def.type" @click="play">
@@ -38,7 +46,7 @@ Vue.component('hand',{
 	props:['cards'],
 	template:`<div class='hand'>
 			
-				<transition-group name='card' tag='div' class='cards'>
+				<transition-group name='card' tag='div' class='cards' @after-leave='handleLeaveTransitionEnd'>
 					<card v-for='card of cards' :key='card.uid' :def='card.def' @play="handlePlay(card)"/>
 				</transition-group>
 			
@@ -46,20 +54,23 @@ Vue.component('hand',{
 	methods:{
 		handlePlay(card){
 			this.$emit('cardplay',card);
+		},
+		handleLeaveTransitionEnd(){
+			this.$emit('card-leave-end');
 		}
 	}
 })
 
 // 浮层
 Vue.component('overlay',{
-	template:`<div class='overlay @click='handleClick>
+	template:`<div class="overlay" @click="handleClicks">
 							<div class='content'>
 								<slot />
 							</div>
 						</div>
 						`,
 	methods:{
-		handleClick(){
+		handleClicks(){
 			this.$emit('close');
 		}
 	}
@@ -101,8 +112,8 @@ Vue.component('overlay-content-last-play',{
 
 Vue.component('player-result',{
 	template:`<div class='player-result' :class='result'>
-							<span class='name'>{{palyer.name}}</span>是
-							<span class='result'>{{resulet}}</span>
+							<span class='name'>{{player.name }}</span>是
+							<span class='result'>{{result}}</span>
 						</div>
 						`,
 	props:['player'],
@@ -116,7 +127,7 @@ Vue.component('player-result',{
 Vue.component('overlay-content-game-over',{
 	template:`<div>
 							<div class='big'>游戏结束</div>
-							<player-result v-for='player in players' :player='player' />
+							<player-result v-for='player in players' :player='player' :key='player.name' />
 						</div>
 						`,
 	props:['players'],
